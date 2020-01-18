@@ -49,7 +49,7 @@ Sburb.Debugger = function() {
     var that = this;
     this.console = new Sburb.Console();
     this.XMLHttpRequest = window.XMLHttpRequest; // Save real XMLHttpRequest
-    window.XMLHttpRequest = function() { return new Sburb.XMLHttpRequest(); }; // Replace real XMLHttpRequest
+    // window.XMLHttpRequest = function() { return new Sburb.XMLHttpRequest(); }; // Replace real XMLHttpRequest
     window.addEventListener("error",function(e) { that.errors.push({"type":e.type,"text":e.message,"url":e.filename,"line":e.lineno,"time":e.timeStamp});},false);
 }
 

@@ -259,7 +259,11 @@ Sburb.initialize = function(div,levelName,includeDevTools){
     mapCanvas.style.display = "none";
     gameDiv.appendChild(mapCanvas);
 	
-	document.getElementById(div).appendChild(deploy);
+    targetDiv = document.getElementById(div)
+    while (c = targetDiv.firstChild) {
+        targetDiv.removeChild(c);
+    }
+	targetDiv.appendChild(deploy);
     
     // Copy local variables into Sburb
     Sburb.Container = deploy;
