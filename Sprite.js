@@ -165,6 +165,24 @@ Sprite.prototype.serialize = function(output){
 	return output;
 }
 
+Sprite.prototype.clone = function(newName) {
+	var newSprite = new Sburb.Sprite(newName,this.x,this.y,this.width,this.height,this.dx,this.dy,this.depthing,this.collidable);
+	for(var anim in this.animations) {
+		if(this.animations.hasOwnProperty(anim)) {
+			newSprite.addAnimation(this.animations[anim].clone());
+		}
+	}
+	for(var action in this.actions) {
+		if(this.actions.hasOwnProperty(action)) {
+			newSprite.addAction(this.actions[action].clone());
+		}
+	}
+	if(this.animation) {
+		newSprite.startAnimation(this.animation.name);
+	}
+	Sburb.sprites[newName]=newSprite;
+	return newSprite;
+}
 
 
 
@@ -210,6 +228,13 @@ Sburb.parseSprite = function(spriteNode, assetFolder) {
 		newSprite.addAnimation(newAnim);
 		if(newState==null){
 			newState = newAnim.name;
+		}
+	}
+	if(anims.length==0) {
+		var asset = Sburb.assets[newName];
+		if(asset && asset.type == "graphic") {
+			newSprite.addAnimation(new Sburb.Animation("image",asset));
+			newState = "image";
 		}
 	}
 	newSprite.startAnimation(newState);

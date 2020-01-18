@@ -2,15 +2,11 @@ var Sburb = (function(Sburb){
 
 function parseParams(info){
 	var params = info.split(",");
-	params.map(cleanParam);
+	for(var i=0; i<params.length; i++){
+		params[i] = params[i].trim();
+	}
 	return params;
 }
-
-function cleanParam(param){
-	return param.trim();
-}
-
-//params = params.map(function(s) { return s.trim(); });
 
 var commands = {};
 
@@ -68,6 +64,7 @@ commands.teleport = function(info){
 //syntax: newPlayerName
 commands.changeChar = function(info){
 	Sburb.char.becomeNPC();
+	Sburb.char.moveNone();
 	Sburb.char.walk();
 	Sburb.destFocus = Sburb.char = Sburb.sprites[info];
 	Sburb.char.becomePlayer();
@@ -245,10 +242,108 @@ commands.removeMovie = function(info){
 	
 }
 
-//Wait for the specified trigger to be satisfied
-//syntax: Trigger syntax
+//Prevents user from providing input to the character
+//syntax: none
+commands.disableControl = function(info){
+	Sburb.inputDisabled = info.trim().length>0 ? new Sburb.Trigger(info) : true;
+}
+
+//Undoes disableControl
+//syntax: none
+commands.enableControl = function(info){
+	Sburb.inputDisabled = false;
+}
+
+//DEPRECATED; DO NOT USE
+//Block user input and main-queue progression until the specified Event
+//syntax: Event syntax
 commands.waitFor = function(info){
-	Sburb.waitFor = new Sburb.Trigger(info);
+	commands.disableControl(info);
+	return commands.sleep(info);
+}
+
+//Execute an action and wait for all followUps to finish
+//syntax: SBURBML action tag
+commands.macro = function(info){
+	var actions = parseActionString(info);
+	var action = actions[0];
+	if(!action.silent) {
+		action.silent = true;
+	}
+	var newQueue = Sburb.performAction(action);
+	if(newQueue) {
+		return new Sburb.Trigger("noActions,"+newQueue.id);
+	}
+}
+
+//Wait for the specified event before continuing the current queue
+//syntax: Event syntax
+commands.sleep = function(info){
+	return new Sburb.Trigger(info);
+}
+
+//Pauses an actionQueue, it can be resumed with resumeActionQueue
+//syntax: Id of actionQueue or list of Ids
+commands.pauseActionQueue = commands.pauseActionQueues = function(info){
+	var params = parseParams(info);
+	for(var i=0;i<params.length;i++) {
+		var queue=Sburb.getActionQueueById(params[i]);
+		if(queue) {
+			queue.paused = true;
+		}
+	}
+}
+
+//Resumes an previously paused actionQueue
+//syntax: Id of actionQueue or list of Ids
+commands.resumeActionQueue = commands.resumeActionQueues = function(info){
+	var params = parseParams(info);
+	for(var i=0;i<params.length;i++) {
+		var queue=Sburb.getActionQueueById(params[i]);
+		if(queue) {
+			queue.paused = false;
+		}
+	}
+}
+
+//Cancels an actionQueue
+//syntax: Id of actionQueue or list of Ids
+commands.cancelActionQueue = commands.cancelActionQueues = function(info){
+	var params = parseParams(info);
+	for(var i=0;i<params.length;i++) {
+		Sburb.removeActionQueueById(params[i]);
+	}
+}
+
+//Pauses a group of actionQueues, they can be resumed with resumeActionQueueGroup
+//syntax: group name or list of group names
+commands.pauseActionQueueGroup = commands.pauseActionQueueGroups = function(info){
+	var params = parseParams(info);
+	for(var i=0;i<params.length;i++) {
+		Sburb.forEachActionQueueInGroup(params[i], function(queue) {
+			queue.paused = true;
+		});
+	}
+}
+
+//Resumes a previously paused group of actionQueues
+//syntax: group name or list of group names
+commands.resumeActionQueueGroup = commands.resumeActionQueueGroups = function(info){
+	var params = parseParams(info);
+	for(var i=0;i<params.length;i++) {
+		Sburb.forEachActionQueueInGroup(params[i], function(queue) {
+			queue.paused = false;
+		});
+	}
+}
+
+//Cancels a group of actionQueues
+//syntax: group name or list of group names
+commands.cancelActionQueueGroup = commands.cancelActionQueueGroups = function(info){
+	var params = parseParams(info);
+	for(var i=0;i<params.length;i++) {
+		Sburb.removeActionQueuesByGroup(params[i]);
+	}
 }
 
 //Add the specified sprite to the specified room
@@ -268,6 +363,15 @@ commands.removeSprite = function(info){
 	var sprite = Sburb.sprites[params[0]];
 	var room = Sburb.rooms[params[1]];
 	room.removeSprite(sprite);
+}
+
+//Clone the specified sprite with a new name
+//syntax: spriteName, newName
+commands.cloneSprite = function(info){
+	var params = parseParams(info);
+	var sprite = parseCharacterString(params[0]);
+	var newName = params[1];
+	sprite.clone(newName);
 }
 
 //Add the specified path as a walkable to the specified room
@@ -484,22 +588,22 @@ commands.setGameState = function(info) {
 commands.goBack = function(info){
 	var params = parseParams(info);
 	var character = parseCharacterString(params[0]);
-	var vx = 0; vy = 0;
-	if(character.facing=="Front"){
-		vx = 0; 
-		vy = -character.speed;
-	}else if(character.facing=="Back"){
-		vx = 0; 
-		vy = character.speed;
-	}else if(character.facing=="Left"){
-		vx = character.speed;
-		vy = 0;
-	}else if(character.facing=="Right"){
-		vx = -character.speed; 
-		vy = 0;
-	}
-	character.tryToMove(vx,vy,Sburb.curRoom);
+	character.x = character.oldX;
+	character.y = character.oldY;
 }
+//tryToTrigger the given triggers in order, if one succeeds, don't do the rest (they are like an else-if chain)
+//syntax: Sburbml trigger syntax
+commands.try = function(info){
+	var triggers = parseTriggerString(info);
+	for(var i=0; i<triggers.length; i++){
+		var trigger = triggers[i];
+		trigger.detonate = true;
+		if(trigger.tryToTrigger()){
+			return;
+		}
+	}
+}
+
 
 //make the character walk in the specified direction (Up, Down, Left, Right, None)
 //syntax: charName, direction
@@ -542,6 +646,20 @@ function parseActionString(string){
 		}
 	}
 	return actions;
+}
+
+function parseTriggerString(string){
+	var triggers = [];
+	string = "<triggers>"+string+"</triggers>";
+	
+	var input = Sburb.parseXML(string);
+	for(var i=0; i<input.childNodes.length; i++) {
+		var tmp = input.childNodes[i];
+		if(tmp.tagName=="trigger") {
+			triggers.push(Sburb.parseTrigger(tmp));
+		}
+	}
+	return triggers;
 }
 
 

@@ -164,6 +164,7 @@ Sburb.AssetManager.prototype.loadAsset = function(assetObj) {
     var name = assetObj.name;
     this.assets[name] = assetObj;
     if(assetObj.instant) {
+        this.loaded[name] = true;
         return;
     }
 
@@ -534,7 +535,7 @@ Sburb.createGraphicAsset = function(name, path) {
         var type = Sburb.assetManager.mimes[ext];
         ret.src = url;
         if(type == "image/gif") {
-            document.getElementById("SBURBgifBin").appendChild(ret);
+            Sburb.Bins["gif"].appendChild(ret);
         }
     };
     ret.failure = function() { ret.failed = true; };
@@ -698,7 +699,7 @@ Sburb.createMovieAsset = function(name,path){
     
     ret.done = function(url) {
         ret.src = url;
-        document.getElementById("SBURBmovieBin").innerHTML += '<div id="'+name+'"><object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" id="movie" width="'+Sburb.Stage.width+'" height="'+Sburb.Stage.height+'"><param name="allowScriptAccess" value="always" /\><param name="wmode" value="transparent"/\><param name="movie" value="'+ret.src+'" /\><param name="quality" value="high" /\><embed src="'+ret.src+'" quality="high" WMODE="transparent" width="'+Sburb.Stage.width+'" height="'+Sburb.Stage.height+'" swLiveConnect="true" id="movie'+name+'" name="movie'+name+'" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" /\></object></div>';
+        Sburb.Bins["movie"].innerHTML += '<div id="'+name+'"><object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" id="movie" width="'+Sburb.Stage.width+'" height="'+Sburb.Stage.height+'"><param name="allowScriptAccess" value="always" /\><param name="wmode" value="transparent"/\><param name="movie" value="'+ret.src+'" /\><param name="quality" value="high" /\><embed src="'+ret.src+'" quality="high" WMODE="transparent" width="'+Sburb.Stage.width+'" height="'+Sburb.Stage.height+'" swLiveConnect="true" id="movie'+name+'" name="movie'+name+'" allowScriptAccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" /\></object></div>';
         document.getElementById(name).style.display = "none";
     }
     ret.success = function(url) { ret.done(url); ret.loaded = true; };
@@ -766,7 +767,7 @@ Sburb.createFontAsset = function(name, sources){
         ret.sources[id] = font;
         ret.remaining -= 1;
         if(!ret.remaining) {
-            document.getElementById("SBURBfontBin").innerHTML += '<style type="text/css">@font-face{ font-family: '+ret.name+'; src: '+ret.sources.join(',')+'; '+ret.extra+'}</style>';
+            Sburb.Bins["font"].innerHTML += '<style type="text/css">@font-face{ font-family: '+ret.name+'; src: '+ret.sources.join(',')+'; '+ret.extra+'}</style>';
             Sburb.stage.font="10px "+name;
             ret.done();
         }
@@ -829,6 +830,20 @@ Sburb.createFontAsset = function(name, sources){
     
     ret.reload();
     
+    return ret
+}
+
+//create a text asset
+Sburb.createTextAsset = function(name, text) {
+    var ret = {text: unescape(text).trim()};
+    ret.name = name;
+    ret.type = "text";
+    ret.instant = true;
+    ret.assetOnLoadFunction = function(fn) {
+        if(fn) { fn(); }
+        return;
+    }
+    ret.assetOnFailFunction = function(fn) { return false; }
     return ret
 }
 

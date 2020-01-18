@@ -18,6 +18,7 @@ Sburb.serialize = function(sburbInst) {
 	var dialoger = sburbInst.dialoger;
 	var curRoom = sburbInst.curRoom;
 	var gameState = sburbInst.gameState;
+	var actionQueues = sburbInst.actionQueues;
 	var char = sburbInst.char;
 
 	var loadedFiles = "";
@@ -36,6 +37,7 @@ Sburb.serialize = function(sburbInst) {
 		" char='"+char.name+
 		(Sburb.bgm?"' bgm='"+Sburb.bgm.asset.name+(Sburb.bgm.startLoop?","+Sburb.bgm.startLoop:""):"")+
 		(Sburb.Stage.scaleX!=1?"' scale='"+Sburb.Stage.scaleX:"")+
+		(Sburb.nextQueueId>0?"' nextQueueId='"+Sburb.nextQueueId:"")+
 		(Sburb.assetManager.resourcePath?("' resourcePath='"+Sburb.assetManager.resourcePath):"")+
 		(Sburb.assetManager.levelPath?("' levelPath='"+Sburb.assetManager.levelPath):"")+
 		(loadedFilesExist?("' loadedFiles='"+loadedFiles):"")+
@@ -46,6 +48,7 @@ Sburb.serialize = function(sburbInst) {
 	output = serializeLooseObjects(output,rooms,sprites);
 	output = serializeRooms(output,rooms);
 	output = serializeGameState(output,gameState);
+	output = serializeActionQueues(output,actionQueues);
 
 	output = output.concat("\n</sburb>");
 	if(out){
@@ -377,6 +380,19 @@ function serializeGameState(output, gameState)
 	return output;
 }
 
+function serializeActionQueues(output, actionQueues) 
+{
+	output = output.concat("<actionQueues>");
+	for(var i=0;i<actionQueues.length;i++) {
+		if(actionQueues[i].curAction) {
+			output = actionQueues[i].serialize(output);
+		}
+	}
+	output = output.concat("\n</actionQueues>\n");
+
+	return output;
+}
+
 //Serialize assets
 function serializeAssets(output,assets,effects){
 	output = output.concat("\n<assets>");
@@ -410,6 +426,8 @@ function serializeAssets(output,assets,effects){
 			innerHTML += curAsset.originalVals;
 		}else if(curAsset.type=="font"){
 			innerHTML += curAsset.originalVals;
+		}else if(curAsset.type=="text"){
+			innerHTML += escape(curAsset.text.trim());
 		}
 
 		output = output.concat("\n<asset name='"+curAsset.name+"' type='"+curAsset.type+"' ");
@@ -489,8 +507,10 @@ function purgeState(){
 		Sburb.bgm.stop();
 		Sburb.bgm = null;
 	}
-	document.getElementById("SBURBmovieBin").innerHTML = "";
-	document.getElementById("SBURBfontBin").innerHTML = "";
+    for(var bin in Sburb.Bins) {
+        if(!Sburb.Bins.hasOwnProperty(bin)) continue;
+        Sburb.Bins[bin].innerHTML = "";
+    }
 	Sburb.gameState = {};
 	Sburb.globalVolume = 1;
 	Sburb.hud = {};
@@ -498,6 +518,8 @@ function purgeState(){
 	Sburb.buttons = {};
 	Sburb.effects = {};
 	Sburb.curAction = null;
+	Sburb.actionQueues = [];
+	Sburb.nextQueueId = 0;
 	Sburb.pressed = {};
 	Sburb.pressedOrder = [];
 	Sburb.chooser = new Sburb.Chooser();
@@ -527,7 +549,7 @@ Sburb.loadSerialFromXML = function(file,keepOld) {
     try {
 		request.send(null);
     } catch(err) {
-		console.log("If you are running Google Chrome, you need to run it with the -allow-file-access-from-files switch to load this.");
+		console.log("Could not load level descriptors.");
 		fi = document.getElementById("levelFile");
 		return;
     }
@@ -582,6 +604,16 @@ function loadSerial(serialText, keepOld) {
     var version = rootAttr.getNamedItem("version");
     if(version) {
     	Sburb.version = version.value;
+    }
+
+    var width = rootAttr.getNamedItem("width");
+    if(width) {
+    	Sburb.setDimensions(width.value, null);
+    }
+
+    var height = rootAttr.getNamedItem("height");
+    if(height) {
+    	Sburb.setDimensions(null, height.value);
     }
 
     var loadedFiles = rootAttr.getNamedItem("loadedFiles");
@@ -704,6 +736,8 @@ function parseSerialAsset(curAsset) {
 	}else if(type=="font"){
 		//var sources = value.split(";");
 		newAsset = Sburb.createFontAsset(name,value);
+	}else if(type=="text"){
+		newAsset = Sburb.createTextAsset(name,value);
 	}
     newAsset._raw_xml = curAsset;
 	return newAsset;
@@ -739,7 +773,9 @@ function loadSerialState() {
 		parseEffects(input);
 	
 		//should be last
-		parseState(input);	
+		parseState(input);
+		//Relies on Sburb.nextQueueId being set when no Id is provided
+		parseActionQueues(input);
   }
   
   if(loadQueue.length==0 && loadingDepth==0){
@@ -902,6 +938,21 @@ function parseGameState(input) {
 	}
 }
 
+function parseActionQueues(input){
+	var element=input.getElementsByTagName("actionQueues");
+	if(element.length==0) {
+		return;
+	}
+	var actionQueues = element[0].childNodes;
+	for(var i=0;i<actionQueues.length;i++) {
+		if(actionQueues[i].nodeName == "#text") {
+			continue;
+		}
+		var actionQueue = Sburb.parseActionQueue(actionQueues[i]);
+		Sburb.actionQueues.push(actionQueue);
+	}
+}
+
 function parseState(input){
 	var rootInfo = input.attributes;
   	
@@ -919,6 +970,11 @@ function parseState(input){
   	var scale = rootInfo.getNamedItem("scale");
   	if(scale){
   		Sburb.Stage.scaleX = Sburb.Stage.scaleY = parseInt(scale.value);
+  	}
+  	
+  	var nextQueueId = rootInfo.getNamedItem("nextQueueId");
+  	if(nextQueueId){
+  		Sburb.nextQueueId = parseInt(nextQueueId.value);
   	}
   	
   	var curRoom = rootInfo.getNamedItem("curRoom");

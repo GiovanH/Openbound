@@ -10,7 +10,7 @@ var Sburb = (function(Sburb){
 /////////////////////////////////////////
 
 //constructor
-Sburb.Trigger = function(info,action,followUp,restart,detonate){
+Sburb.Trigger = function(info,action,followUp,restart,detonate,operator){
 	//console.log("Trigger constructor with: "+info, info);
 	if(typeof info == "string"){
 		info = [info];
@@ -21,6 +21,8 @@ Sburb.Trigger = function(info,action,followUp,restart,detonate){
 	this.action = action?action:null;
 	this.restart = restart?restart:false;
 	this.detonate = detonate?detonate:false;
+	this.operator = operator?operator.toUpperCase():"AND";
+	this.waitFor = null;
 	
 	this.events = [];
 	for(var i=0;i<info.length;i++){
@@ -41,18 +43,26 @@ Sburb.Trigger.prototype.reset = function(){
 }
 
 Sburb.Trigger.prototype.checkCompletion = function() {
-	var result = true;
-	for(var i=0;i<this.events.length;i++){
-		result = result && this.events[i].checkCompletion();
-	}
-	return result;
+	return this["operator"+this.operator]();
 }
 
 //check if the trigger has been satisfied
 Sburb.Trigger.prototype.tryToTrigger = function(){
+	if(this.waitFor){
+		if(this.waitFor.checkCompletion()){
+			this.waitFor=null;
+		}else{
+			return;
+		}
+	}
 	if(this.checkCompletion()){
 		if(this.action){
-			Sburb.performAction(this.action);
+			var result = Sburb.performAction(this.action);
+			if(result){
+				this.waitFor = new Sburb.Trigger("noActions,"+result.id);
+			}else{
+				this.waitFor = new Sburb.Trigger("noActions");
+			}
 		}
 		if(this.followUp){
 			if(this.followUp.tryToTrigger()){
@@ -71,9 +81,14 @@ Sburb.Trigger.prototype.serialize = function(output){
 	output = output.concat("\n<trigger"+
 		(this.restart?" restart='true'":"")+
 		(this.detonate?" detonate='true'":"")+
+		(this.operator?" operator='"+this.operator+"'":"")+
 		">");
 		for(var i=0;i<this.info.length;i++){
-			output = output.concat("<args>"+escape(this.info[i])+"</args>");
+			if(this.events[i].serialize) {
+				output = output.concat("<args>"+escape(this.events[i].serialize())+"</args>");
+			} else {
+				output = output.concat("<args>"+escape(this.info[i])+"</args>");
+			}
 		}
 	if(this.action){
 		output = this.action.serialize(output);
@@ -85,10 +100,43 @@ Sburb.Trigger.prototype.serialize = function(output){
 	return output;
 }
 
+Sburb.Trigger.prototype.operatorAND = function(){
+	var result = true;
+	for(var i=0;i<this.events.length;i++){
+		result = result && this.events[i].checkCompletion();
+	}
+	return result;
+}
 
+Sburb.Trigger.prototype.operatorOR = function(){
+	var result = false;
+	for(var i=0;i<this.events.length;i++){
+		result = result || this.events[i].checkCompletion();
+	}
+	return result;
+}
 
+Sburb.Trigger.prototype.operatorXOR = function(){
+	var result = false;
+	for(var i=0;i<this.events.length;i++){
+		if(this.events[i].checkCompletion()){
+			if(result){
+				return false; //*EXCLUSIVE* OR!
+			}else{
+				result = true;
+			}
+		}
+	}
+	return result;
+}
 
+Sburb.Trigger.prototype.operatorNAND = Sburb.Trigger.prototype.operatorNOT = function(){
+	return !this.operatorAND();
+}
 
+Sburb.Trigger.prototype.operatorNOR = function(){
+	return !this.operatorOR();
+}
 
 
 ////////////////////////////////////////on
@@ -110,13 +158,15 @@ Sburb.parseTrigger = function(triggerNode){
 		var action = null;
 		var restart = false;
 		var detonate = false;
+		var operator = null;
 		if(actions.length>0 && actions[0].parentNode==triggerNode){
 			action = Sburb.parseAction(actions[0]);
 		}
 		restart = attributes.getNamedItem("restart")?attributes.getNamedItem("restart").value=="true":restart;
 		detonate = attributes.getNamedItem("detonate")?attributes.getNamedItem("detonate").value=="true":detonate;
+		operator = attributes.getNamedItem("operator")?attributes.getNamedItem("operator").value:operator;
 		
-		var trigger = new Sburb.Trigger(info,action,null,restart,detonate);
+		var trigger = new Sburb.Trigger(info,action,null,restart,detonate,operator);
 		
 		if(!firstTrigger){
 			firstTrigger = trigger;
@@ -125,10 +175,16 @@ Sburb.parseTrigger = function(triggerNode){
 			oldTrigger.followUp = trigger;
 		}
 		oldTrigger = trigger;
-		var triggerNodes = triggerNode.getElementsByTagName("trigger");
-		if(triggerNodes){
-			triggerNode = triggerNodes[0];
-		}else{
+		var found=false;
+		for(var i=0;i<triggerNode.childNodes.length;i++){
+			var child = triggerNode.childNodes[i];
+			if(child.nodeName=="trigger"){
+				triggerNode = child;
+				found = true;
+				break;
+			}
+		}
+		if(!found){
 			break;
 		}
 	}while(triggerNode)

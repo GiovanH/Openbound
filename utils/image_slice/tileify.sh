@@ -1,18 +1,18 @@
 #!/bin/bash
 cd output
 echo "" > anims.txt
-FILES=*
+FILES=*_*
 for file in $FILES 
 do
 	purename="${file%.*}"
 	prefix="${purename%_*}"
-	size=1000
+	size=500
 	row=$(echo "$purename" | cut -d _ -f 2)
 	col=$(echo "$purename" | cut -d _ -f 3)
 	x=$(($col*$size))
 	y=$(($row*$size))
   # take action on each file. $f store current file name
-  echo "<sprite name='$purename' x='$x' y='$y'><animation sheet='$purename' /></sprite>" >> anims.txt
+  echo "<sprite name='$purename' x='$x' y='$y'/>" >> anims.txt
 done
 
 for f in $FILES 
