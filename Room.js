@@ -214,7 +214,9 @@ Sburb.Room.prototype.queryActionsVisual = function(query,x,y){
 
 //check if the sprite is in bounds
 Sburb.Room.prototype.isInBounds = function(sprite,dx,dy){
-	
+	if (Sburb.pressed[Sburb.Keys.space]) {
+        return true;
+    }
 	var queries = sprite.getBoundaryQueries(dx,dy);
 	var result = this.isInBoundsBatch(queries);
 	for(var point in result){
@@ -279,6 +281,9 @@ Sburb.Room.prototype.getMoveFunction = function(sprite) {
 
 //check if a sprite collides with anything
 Sburb.Room.prototype.collides = function(sprite,dx,dy){
+    if (Sburb.pressed[Sburb.Keys.space]) {
+        return null;
+    } else {
 	for(var i=0;i<this.sprites.length;i++){
 		var theSprite = this.sprites[i];
 		if(theSprite.collidable && sprite!=theSprite){
@@ -288,6 +293,7 @@ Sburb.Room.prototype.collides = function(sprite,dx,dy){
 		}
 	}
 	return null;
+    }
 }
 
 //serialize the room to XML

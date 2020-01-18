@@ -49,6 +49,15 @@ Sburb.Character.prototype.followBufferLength = 9;
 
 //update as if one frame has passed
 Sburb.Character.prototype.update = function(curRoom){
+
+
+	if (Sburb.pressed[Sburb.Keys.tab]) {
+		this.speed = 32;
+    } else {
+		this.speed = 12;
+    }
+
+
 	if(this.following){
 		if(this.following.isNPC() && !this.isNPC()){
 			this.becomeNPC();

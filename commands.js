@@ -161,7 +161,7 @@ commands.openChest = function(info){
 		}
 	}
 	
-	chest.removeAction(Sburb.curAction.name);
+	// chest.removeAction(Sburb.curAction.name);
 	var offset = params[0].length+params[1].length+2;
 	var speech = info.substring(offset,info.length).trim();
 	speech = speech.charAt(0)=="@" ? speech : "@! "+speech;
