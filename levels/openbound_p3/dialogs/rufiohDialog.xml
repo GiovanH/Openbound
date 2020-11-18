@@ -152,32 +152,32 @@
 <action class='rufiohTalk5' sprite='damara' command='talk' name='Talk to Rufioh.'>
       <args>
       @rufioh_sadtalk \nRUFIOH: gotta be honest damara... 1 been feel1ng pretty bad...
-      @damara_huh DAMARA: なぜですか？
+      @damara_huh DAMARA: Why?
       @rufioh_surprisetalk \nRUFIOH: um... you can keep a secret, r1ght?
-      @damara_fiendish DAMARA: はい、もちろん。私はあなたの友達です。
+      @damara_fiendish DAMARA: Yes, of course. I am your friend.
       @rufioh_surprise \nRUFIOH: yeah...
       @rufioh_surprisetalk \nRUFIOH: 1t's horuss... and you know... been th1nk1ng about break1ng 1t off w1th h1m...
-      @damara_talk DAMARA: 何を壊す？彼のホーン？
+      @damara_talk DAMARA: What will you break? His horn?
       @rufioh_sheepish \nRUFIOH: hahaha! naw... that wouldn't do much good...
       @rufioh_sadtalk \nRUFIOH: 1 mean... 1 feel l1ke a chump for even th1nk1ng about 1t... he's been so cool...
       @rufioh_offendedtalk \nRUFIOH: but d*mn! etern1ty 1s a long f***1ng t1me!!! 1 dunno 1f a relat1onsh1p should really last that long...
-      @damara_talk DAMARA: あなたのセックスライフはどうですか？
+      @damara_talk DAMARA: What about your sex life?
       @rufioh_notalk \nRUFIOH: whoa, uh... k1nda personal quest1on? anyway that's not 1t... 
       @rufioh_sadtalk \nRUFIOH: 1 feel gu1lty for say1ng so... 1'm just not 1nto 1t... so many repet1t1ve dates over the m1llen1a... so much l1ke... talk1ng about l1vestock and b1g muscular an1mals and... 1 dunno. those aren't really my 1nterests...
       @rufioh_surprisetalk \nRUFIOH: maybe we were never that compat1ble and 1 just never had the guts to say so?
-      @damara_sadtalk DAMARA: RUFIOH。私はあなたにこのことを告げた。毎日。永遠に。
+      @damara_sadtalk DAMARA: RUFIOH。I told you this. every day. eternally.
       @rufioh_laugh \nRUFIOH: 1 know, 1 know... 1 d1dn't l1sten to you... 1 f1gured you were st1ll all mad and jealous!!!
-      @damara_mean DAMARA: 私は怒って嫉妬した。
+      @damara_mean DAMARA: I was mad and jealous.
       @rufioh_sheepish \nRUFIOH: r1ght... 1 just don't know what to do.
       @rufioh_surprisetalk \nRUFIOH: he's great... but he's so cl1ngy! 1 don't know how he keeps that up after all th1s t1me... dude's got stam1na... 1'm just l1ke... romant1cally exhausted. you get me, doll?
-      @damara_meantalk DAMARA: はい。愛が私には死んでいる。ので、誰かがずっと前に、心臓を介して私を刺した。
+      @damara_meantalk DAMARA: Yes. Love is dead to me. So long ago someone stabbed me through the heart.
       @rufioh_idle \nRUFIOH: heh, touche.
       @rufioh_sadtalk \nRUFIOH: but for real... 1 just don't want to hurt h1s feel1ngs...
-      @damara_squinttalk DAMARA: あなたは私が彼を殺したいですか？再び？
+      @damara_squinttalk DAMARA: You want me to kill him? again?
       @rufioh_notalk \nRUFIOH: no!!! god, no... don't hurt anyone... let's not go there aga1n!
-      @damara_smile DAMARA: 私が彼を誘惑したいですか？
+      @damara_smile DAMARA: Should I seduce him?
       @rufioh_offendedtalk \nRUFIOH: er... 1 guess 1f the two of you are l1ke... um. that's really between you and h1m? not sure he would go for that... anyway, 1 don't th1nk that would actually help me...
-      @damara_squinttalk DAMARA: 私は彼の魂を消費するために悪魔をもたらすでしょう。
+      @damara_squinttalk DAMARA: I will bring a demon to consume his soul.
       @rufioh_notalk \nRUFIOH: man, no! 1 told you, please don't feed anyone's soul to ANYBODY!!!
       @rufioh_offendedtalk \nRUFIOH: you've got to keep crazy talk l1ke that down, damara!
       @rufioh_surprisetalk \nRUFIOH: 1f people knew some of the sh*t you sa1d... how you say crazy sh*t l1ke you want to serve h1m... f***!
@@ -185,8 +185,8 @@
       @rufioh_offendedtalk \nRUFIOH: h*ll, d1dn't you hear meenah was try1ng to ra1se an army to k1ll h1m?
       @rufioh_sheepish \nRUFIOH: 1f she could hear some of the th1ngs you told me... sh*t... 1 can't ever let her f1nd out...
       @rufioh_sad:#}:( \nRUFIOH: 1f she knew, you'd both start f1ght1ng aga1n...
-      @damara_talk DAMARA: あなたは必然だけを遅らせる。
-      @damara_squint DAMARA: 私たちの終了時間が近いです。
+      @damara_talk DAMARA: You delay only the inevitable.
+      @damara_squint DAMARA: Our end time is near.
       <!--  -->
       </args>
 </action>

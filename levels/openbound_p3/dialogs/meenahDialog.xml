@@ -78,20 +78,20 @@
 
 <action class='meenahTalk3' sprite='damara' command='talk' name='Talk to Meenah.'>
       <args>
-      @damara_talk DAMARA: あなたは時間の領主に挑戦します。
-      @damara_talk DAMARA: あなたの哀れな軍隊は失敗しなければならない。
-      @damara_talk DAMARA: 彼はあなたの幽霊を食べるようになる。彼は現実そのものを消費するからである。
+      @damara_talk DAMARA: You challenge the Lord of Time.
+      @damara_talk DAMARA: Your pathetic army must fail.
+      @damara_talk DAMARA: He will eat your ghost. For he consumes the reality itself.
       @meenah_idle MEENAH: i think...
       @meenah_idle MEENAH: it sounded like...
       @meenah_talk MEENAH: youre tryin to wish me luck in my upcoming battle?
       @meenah_happytalk MEENAH: hey thanks megido
       @meenah_happytalk MEENAH: maybe i had you all wrong
-      @damara_smile DAMARA: ない。あなたはそうしなかった。
+      @damara_smile DAMARA: No. You did not.
       @meenah_happytalk MEENAH: aw ive probably been a bitch to you for no reason
       @meenah_happytalk MEENAH: lets forget all that shit ever happened
       @meenah_happytalk MEENAH: hey how about a hug
       @meenah_angrytalk MEENAH: whoa watch where youre puttin that hand!!!
-      @damara_smoke DAMARA: 私は何も後悔はありません。
+      @damara_smoke DAMARA: I have no regrets.
       @meenah_talk MEENAH: apology accepted
       @meenah_talk MEENAH: hey you get around to moving that huge quartz glacier yet
       @meenah_fish MEENAH: kind of in a hurry here

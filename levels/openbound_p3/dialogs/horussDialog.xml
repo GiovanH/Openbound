@@ -137,28 +137,27 @@
 
 <action class='horussTalk5' sprite='damara' command='talk' name='Talk to Horuss.'>
       <args>
-      @damara_meantalk DAMARA: これ以上のゲームはありません。馬男。今私をファック。
+      @damara_meantalk DAMARA: No more games. Horse man. Fuck me now.
       @horuss_idle HORUSS: 8=D &lt; E%25cuse me?
-      @damara_meantalk DAMARA: HORSEAPONIまたがっ私を曲げる。あなたは私がハードファック。HORSEYスタイル。
+      @damara_meantalk DAMARA: HORSEAPONI bends over me. You fuck me hard. HORSEY style.
       @horuss_smiletalk HORUSS: 8=D &lt; Oh! I see you've taken an interest in this fine, albeit diminutive steed given to me as a gift earlier.
       @horuss_smiletalk HORUSS: 8=D &lt; Isn't it wonderful? I shall feed it many an apple and it will grow to be STRONG.
-      @damara_smilemeantalk DAMARA: 私にリンゴを養う。その後、私の髪をつかむ。あなたはチャンピオンのように私に乗るだろう。
+      @damara_smilemeantalk DAMARA: Feed me apples. Then grab my hair. You will ride me like a champion.
       @horuss_sweat_talk HORUSS: 8=D &lt; I don't... do what with your horns? Ride what, now?
-      @damara_squinttalk DAMARA: のバケツを埋めることができます。その後、内容がスプラッシュ。私の体の上にすべての。次に干し草の山に私を投げる。
+      @damara_squinttalk DAMARA: You can fill the bucket. After that, the contents splash. All over my body. Then throw me at the haystack.
       @horuss_hmmtalk HORUSS: 8=D &lt; You want me to... something about... hay? Hm.
-      @damara_talk DAMARA: 私はあなたのホーンを吸うことができます。同時に、あなたは私のお尻を平手打ち。リズミカルにそれを行う。また。いななく。
+      @damara_talk DAMARA: I can suck your horn. At the same time, you slap my ass. Do it rhythmically. Also. Neigh.
       @horuss_sweat_talk HORUSS: 8=D &lt; You would like me to perform... what rhythmic behavior, e%25actly? While making which animal noise?
-      @damara_talk DAMARA: 私のすべての反復をファック。性的エクスタシーを体験する私たちのすべてを引き起こす。私たちは一斉にオーガズムましょう。
+      @damara_talk DAMARA: Fuck me all the repetitions. Cause us all to experience sexual ecstasy. Let us orgasm together.
       @horuss_sweat_bashful2 HORUSS: 8=D &lt; Do what with... wait... all of you? Wouldn't that be quite a lot of Damaras, regardless of the activity you are trying to describe?
-      @damara_squinttalk DAMARA: 清潔なタオルで私を包んでください。私は農場の動物のようにうめき声をしなければならない。
-      @damara_smilemeantalk DAMARA: 私の足の間に腹立たしそうに鼻を鳴らす。私は殺された子羊のように悲鳴を上げるでしょう。
-      @damara_fiendish DAMARA: 私たちは一緒に私たちのお尻を持ってみましょう。共通のオーガズムに参加。すべての終わりでは、私たちを取り囲んでいる。
+      @damara_squinttalk DAMARA: Snort annoyingly between my feet. I will scream like a killed lamb.
+      @damara_smilemeantalk DAMARA: Fuck my all iterations. Cause all of us to experience sexual ecstasy. We try to orgasm in unison.
       @horuss_crossed HORUSS: 8=D &lt; Trying to decode your speech is quite agitating, you know.
       @horuss_crossed2 HORUSS: 8=D &lt; Whenever I talk to you, my system gets a little switchy.
       @horuss_sweat_grin HORUSS: 8=D &lt; I begin to faintly channel an ancient soul from Alterniasia, and I come very close to understanding you. But then it vanishes just as quickly, and my host vessel is left with nothing but an overwhelming e%25perience of perspiration.
       @horuss_sweat_talk HORUSS: 8=D &lt; Not that I would e%25pect a lowly rust b100ded singleton like you to understand.
-      @damara_squinttalk DAMARA: もっと私を低下させる。私はほとんどそこにいる。
-      @damara_fu4 DAMARA: フリーク。
+      @damara_squinttalk DAMARA: Degrade me more. I'm almost there.
+      @damara_fu4 DAMARA: Freak.
       <!--  -->
       </args>
 </action>
