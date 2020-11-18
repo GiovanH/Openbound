@@ -53,7 +53,7 @@ Sburb.Character.prototype.followBufferLength = 6;
 Sburb.Character.prototype.update = function(curRoom){
 
 
-	if (Sburb.pressed[Sburb.Keys.tab]) {
+	if (Sburb.pressed[Sburb.Keys.shift]) {
 		this.speed = 32;
     } else {
 		this.speed = 12;
